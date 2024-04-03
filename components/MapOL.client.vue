@@ -9,13 +9,15 @@
       <ol-view
         ref="viewRef"
         :center="center"
-        :rotation="rotation"
-        :zoom="zoom"
+        :rotation="0"
+        :zoom="15"
         projection="EPSG:25830"
       />
 
       <ol-tile-layer>
-        <ol-source-osm />
+        <ol-source-xyz
+          :url="`https://mt3.google.com/vt/lyrs=y&x={x}&y={y}&z={z}`"
+        />
       </ol-tile-layer>
 
       <ol-vector-layer>
@@ -43,9 +45,6 @@ import type { Map, View } from "ol";
 
 const mapRef = ref<{ map: Map }>();
 const viewRef = ref<{ view: View }>();
-const center = ref([500785.9863512241, 4638154.586848955]);
-const zoom = ref(17);
-const rotation = ref(0);
 
 proj4.defs(
   "EPSG:25830",
@@ -57,16 +56,43 @@ const wktFormat = new WKT();
 
 const geometryFeatures = ref<Feature[]>([]);
 
+interface MapOLProps {
+  center?: number[];
+  geometry?: string;
+}
+
+enum PROJECTIONS {
+  EPSG25830 = "EPSG:25830",
+}
+
+const props = withDefaults(defineProps<MapOLProps>(), {
+  center: undefined,
+  geometry: "",
+});
+
+const { center, geometry } = toRefs(props);
+
 // -------------------------------------------------------
 // onMounted
 // -------------------------------------------------------
 onMounted(() => {
-  const geometry =
-    "MULTIPOLYGON(((500538.9863512241 4638424.586848955,501016.7991949093 4638371.797327979,500871.9664065969 4638191.77152569,501221.1893914997 4638245.914624118,501207.65361689095 4637923.763188435,500422.57868959 4637971.138399563,500538.9863512241 4638424.586848955)))";
+  // If you comment this setTimeout and uncomment the below line "geometryFeatures.value = ...",
+  // the "Maximum recursive updates exceeded" message doesn't appear
+  setTimeout(() => {
+    geometryFeatures.value = getFeatures(geometry.value);
+  }, 100);
 
-  geometryFeatures.value = wktFormat.readFeatures(geometry, {
+  // geometryFeatures.value = getFeatures(geometry.value);
+});
+
+// -------------------------------------------------------
+// getFeatures
+// -------------------------------------------------------
+function getFeatures(_wkt: string): Feature[] {
+  const _features = wktFormat.readFeatures(_wkt, {
     dataProjection: "EPSG:25830",
     featureProjection: "EPSG:25830",
   });
-});
+  return _features;
+}
 </script>
