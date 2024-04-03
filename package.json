@@ -7,18 +7,19 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "reinstall": "rm -rf node_modules .nuxt package-lock.json && npm i"
   },
   "dependencies": {
     "@types/proj4": "^2.5.5",
-    "nuxt": "^3.10.3",
-    "ol": "~8.2.0",
+    "nuxt": "^3.11.1",
+    "ol": "^8.2.0",
     "ol-contextmenu": "^5.3.0",
-    "ol-ext": "~4.0.13",
+    "ol-ext": "^4.0.13",
     "proj4": "^2.10.0",
-    "vue": "^3.4.21",
+    "vue": "3.4.21",
     "vue-router": "^4.3.0",
-    "vue3-openlayers": "~4.0.2"
+    "vue3-openlayers": "^4.1.2"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.11.4"
